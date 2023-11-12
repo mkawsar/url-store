@@ -1,0 +1,75 @@
+version: '3'
+services:
+    #PHP
+    laravelapp:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: laravel-docker
+        container_name: laravelapp
+        restart: unless-stopped
+        tty: true
+        environment:
+            SERVICE_NAME: app
+            SERVICE_TAGS: dev
+        working_dir: /var/www/html
+        volumes:
+            - ./:/var/www/html
+            - ./.docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - laravel
+
+    laraveldb:
+        platform: linux/amd64
+        image: mysql
+        container_name: laraveldb
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "3308:3306"
+        volumes:
+            - dbdata:/var/lib/mysql/
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_ROOT_PASSWORD: password
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        networks:
+            - laravel
+
+    #Nginx
+    laravelserver:
+        image: nginx:alpine
+        container_name: laravelserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "8092:8092"
+            - "8103:443"
+        volumes:
+            - ./:/var/www/html
+            - ./.docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - laravelapp
+            - laraveldb
+        networks:
+            - laravel
+    # Scheduler
+    scheduler:
+        build:
+            context: .
+            dockerfile: supervisor.Dockerfile
+        container_name: scheduler
+        volumes:
+            - ./:/var/www/html
+        networks:
+            - laravel
+
+
+#Redes
+networks:
+    laravel:
+        driver: bridge
+volumes:
+    dbdata:
+        driver: local
