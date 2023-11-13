@@ -24,6 +24,7 @@ class UrlController extends Controller
             ->whereHas('domain', function ($q) use ($input) {
                 $q->where('name', 'LIKE', '%' . $input . '%');
             })
+            ->where('url', 'LIKE', '%' . $input . '%')
             ->orderBy('created_at', $order)
             ->paginate(10);
         return view('index', ['urls' => $urls]);
