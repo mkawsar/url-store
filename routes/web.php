@@ -15,10 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
+    return redirect()->route('url.list');
 });
 
 Route::prefix('url')->name('url.')->group(function () {
+    Route::get('list', [UrlController::class, 'index'])->name('list');
     Route::get('create', [UrlController::class, 'create'])->name('create');
     Route::post('store', [UrlController::class, 'store'])->name('store');
 });

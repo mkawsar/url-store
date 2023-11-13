@@ -1,55 +1,50 @@
 @extends('layouts.main')
 @section('content')
-    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    <h4 class="my-0 fw-normal">Free</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$0<small class="text-muted fw-light">/mo</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>10 users included</li>
-                        <li>2 GB of storage</li>
-                        <li>Email support</li>
-                        <li>Help center access</li>
-                    </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-outline-primary">Sign up for free</button>
-                </div>
+    <div class="row mb-3">
+        <div class="card mb-12 rounded-3 shadow-sm">
+            <div class="card-header py-3">
+                <h4 class="my-0 fw-normal">URLs List</h4>
             </div>
-        </div>
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm">
-                <div class="card-header py-3">
-                    <h4 class="my-0 fw-normal">Pro</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$15<small class="text-muted fw-light">/mo</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>20 users included</li>
-                        <li>10 GB of storage</li>
-                        <li>Priority email support</li>
-                        <li>Help center access</li>
-                    </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary">Get started</button>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card mb-4 rounded-3 shadow-sm border-primary">
-                <div class="card-header py-3 text-white bg-primary border-primary">
-                    <h4 class="my-0 fw-normal">Enterprise</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$29<small class="text-muted fw-light">/mo</small></h1>
-                    <ul class="list-unstyled mt-3 mb-4">
-                        <li>30 users included</li>
-                        <li>15 GB of storage</li>
-                        <li>Phone and email support</li>
-                        <li>Help center access</li>
-                    </ul>
-                    <button type="button" class="w-100 btn btn-lg btn-primary">Contact us</button>
-                </div>
+            <div class="card-body">
+                <form class="row row-cols-md-auto g-3 align-items-end py-3" method="get" action="{{ route('url.list') }}">
+                    <div class="col-sm-7">
+                        <input type="text" name="query" id="id" class="form-control" placeholder="Searching...." value="{{ request()->has('query') ? request()->get('query') : '' }}">
+                    </div>
+                    <div class="col-sm">
+                        <select class="form-select" name="order" id="cg">
+                            <option value="">Select An Option</option>
+                            <option value="asc" @if(!empty(request()->has('order')) && request()->get('order') == 'asc') selected @endif>Ascending</option>
+                            <option value="desc" @if(!empty(request()->has('order')) && request()->get('order') == 'desc') selected @endif>Descending</option>
+                        </select>
+                    </div>
+                    <div class="col-sm">
+                        <button type="submit" class="btn btn-success btn-active-light-success">Show Results</button>
+                    </div>
+                    <div class="col-sm">
+                        <a href="{{ route('url.list') }}" class="btn btn-warning btn-active-light-warning">Reset Parameters</a>
+                    </div>
+                </form>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Domain Name</th>
+                        <th scope="col">Url</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($urls as $key => $item)
+                        <tr>
+                            <th scope="row">{{ $key + 1 }}</th>
+                            <td>{{ $item->domain->name }}</td>
+                            <td>
+                                <a href="{{ $item->url }}" target="_blank">{{ $item->url }}</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                {!! $urls->withQueryString()->links('vendor.pagination.index') !!}
             </div>
         </div>
     </div>

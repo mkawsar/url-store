@@ -9,6 +9,26 @@ use Illuminate\Http\Request;
 
 class UrlController extends Controller
 {
+    public function index(Request $request)
+    {
+        $order = 'asc';
+        $input = '';
+        if (!empty($request->get('order'))) {
+            $order = $request->get('order');
+        }
+        if (!empty($request->get('query'))) {
+            $input = $request->get('query');
+        }
+
+        $urls = Url::query()->with('domain')
+            ->whereHas('domain', function ($q) use ($input) {
+                $q->where('name', 'LIKE', '%' . $input . '%');
+            })
+            ->orderBy('created_at', $order)
+            ->paginate(10);
+        return view('index', ['urls' => $urls]);
+    }
+
     public function create()
     {
         return view('add');

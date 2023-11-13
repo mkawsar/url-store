@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Url extends Model
 {
     use HasFactory;
+
+    public function domain(): object
+    {
+        return $this->hasOne(Domain::class, 'id', 'domain_id');
+    }
 }
