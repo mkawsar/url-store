@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
 # Copiar composer.lock y composer.json
 # COPY composer.lock composer.json /var/www/html
@@ -17,9 +17,7 @@ RUN apt-get update && apt-get install -y \
     vim \
     unzip \
     git \
-    curl \
-    nodejs \
-    npm
+    curl
 
 RUN apt-get update && apt-get install -y \
     libonig-dev \
@@ -42,14 +40,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www
 
-# Copiar el directorio existente a /var/www
 COPY . /var/www/html
-# copiar los permisos del directorio de la aplicación
+COPY .docker/vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY .docker/start.sh /usr/local/bin/start
+
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod u+x /usr/local/bin/start \
+    && a2enmod rewrite
+
 RUN chown -R www-data:www-data /var/www/html
 RUN chown -R www-data:www-data /var/www/html/storage
 
-# cambiar el usuario actual por www
-# USER www
-# exponer el puerto 9000 e iniciar php-fpm server
-#EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["/usr/local/bin/start", "php-fpm"]
