@@ -1,13 +1,13 @@
 version: "3"
 services:
-    urlapp:
+    app:
         image: laravel-www
-        container_name: urlapp
+        container_name: app
         build:
             context: .
             dockerfile: Dockerfile
         depends_on:
-            - urlmysql
+            - db
         ports:
             - "8080:80"
         volumes:
@@ -16,8 +16,8 @@ services:
             APP_ENV: local
             CONTAINER_ROLE: app
 
-    urlmysql:
-        container_name: urlmysql
+    db:
+        container_name: db
         platform: linux/amd64
         image: mysql
         ports:
@@ -29,16 +29,17 @@ services:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_USER: homestead
             MYSQL_PASSWORD: secret
-    queue:
+    scheduler:
         image: laravel-www
-        container_name: laravel-queue
+        container_name: scheduler
         depends_on:
-            - urlapp
+            - app
+            - db
         volumes:
             - .:/var/www/html
         environment:
             APP_ENV: local
-            CONTAINER_ROLE: queue
+            CONTAINER_ROLE: scheduler
 
 volumes:
     dbdata:

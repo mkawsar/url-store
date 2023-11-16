@@ -6,12 +6,17 @@
                 <h4 class="my-0 fw-normal">URLs List</h4>
             </div>
             <div class="card-body">
+                @if(Session::has('success'))
+                    <div class="alert alert-success" role="alert">{{ session('success') }}</div>
+                @elseif (Session::has('error'))
+                    <div class="alert alert-danger" role="alert">{{ session('error') }}</div>
+                @endif
                 <form class="row row-cols-md-auto g-3 align-items-end py-3" method="get" action="{{ route('url.list') }}">
                     <div class="col-sm-7">
                         <input type="text" name="query" id="id" class="form-control" placeholder="Searching...." value="{{ request()->has('query') ? request()->get('query') : '' }}">
                     </div>
                     <div class="col-sm">
-                        <select class="form-select" name="order" id="cg">
+                        <select class="form-select" name="order">
                             <option value="">Select An Option</option>
                             <option value="asc" @if(!empty(request()->has('order')) && request()->get('order') == 'asc') selected @endif>Ascending</option>
                             <option value="desc" @if(!empty(request()->has('order')) && request()->get('order') == 'desc') selected @endif>Descending</option>

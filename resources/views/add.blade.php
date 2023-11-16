@@ -14,14 +14,17 @@
                 <form id="form" method="post" action="{{ route('url.store') }}">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="mb-3">
-                        <label for="url" class="form-label">Example textarea</label>
+                        <label for="url" class="form-label">URL</label>
                         <textarea class="form-control @if($errors->has('url')) is-invalid @endif" id="url" rows="3"
-                                  data-parsley-required="true" name="url"></textarea>
+                                  data-parsley-required="true" name="url" placeholder="URL"></textarea>
+                        <div id="passwordHelpBlock" class="form-text">
+                            If you want to add more than one URL at the same time, you need to add the URL on a new line
+                        </div>
                         @if($errors->has('url'))
                             <div class="invalid-feedback">{{ $errors->first('url') }}</div>
                         @endif
                     </div>
-                    <button type="submit" class="btn btn-lg btn-outline-primary">Sign up for free</button>
+                    <button type="submit" class="btn btn-lg btn-outline-primary">Submit</button>
                 </form>
             </div>
         </div>
